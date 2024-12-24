@@ -1,3 +1,4 @@
+import { useState } from "react";
 import styled from "styled-components";
 
 const Section = styled.section`
@@ -66,14 +67,20 @@ const MonthButton = styled.button`
   }
 `;
 
-const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-
-export default function MonthNavigation() {
+export default function MonthNavigation({ setMonth }) {
+  const date = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   return (
     <Section>
       <MonthWrapper>
-        {MONTHS.map((element) => {
-          return <MonthButton key={element}>{`${element}월`}</MonthButton>;
+        {date.map((element) => {
+          return (
+            <MonthButton
+              onClick={() => {
+                setMonth(element);
+              }}
+              key={element}
+            >{`${element}월`}</MonthButton>
+          );
         })}
       </MonthWrapper>
     </Section>
