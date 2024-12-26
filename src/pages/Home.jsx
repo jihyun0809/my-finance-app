@@ -26,13 +26,18 @@ const Home = () => {
   const selectMonth = expenses.filter(
     (expense) => getMonth(expense.date) === month
   );
+  console.log(selectMonth);
 
   return (
     <>
       <Wrapper className="Wrapper">
-        <MonthNavigation setMonth={setMonth} selectMonth={selectMonth} />
-        <CreateExpense />
-        <ExpenseList />
+        <MonthNavigation setMonth={setMonth} />
+        <CreateExpense
+          expenses={expenses}
+          setExpenses={setExpenses}
+          setMonth={setMonth}
+        />
+        <ExpenseList expenses={expenses} />
       </Wrapper>
     </>
   );

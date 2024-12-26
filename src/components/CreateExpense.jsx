@@ -1,12 +1,12 @@
 import { useState } from "react";
 import styled from "styled-components";
+import supabase from "../utils/supabase";
 
-const CreateExpense = () => {
+const CreateExpense = ({ expenses, setExpenses, setMonth }) => {
   const [date, setDate] = useState("");
   const [item, setItem] = useState("");
   const [price, setPrice] = useState(0);
   const [content, setContent] = useState("");
-  // const [expenseList, setExpenseList] = useState([]);
 
   const handleChangeDate = (e) => {
     setDate(e.target.value);
@@ -21,16 +21,24 @@ const CreateExpense = () => {
     setContent(e.target.value);
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   alert("항목이 추가되었습니다!");
-  //   if (!date) {
-  //     alert("날짜를 입력해주세요");
-  //   }
-  //   return;
-  // };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { data, error } = await supabase
+      .from("expenses")
+      .insert([
+        { date: date, item: item, amount: price, content: content }, // 추가할 데이터
+      ])
+      .select();
+
+    setExpenses([...expenses, data]);
+    setDate("");
+    setItem("");
+    setPrice(0);
+    setContent("");
+  };
+
   return (
-    <>
+    <form onSubmit={handleSubmit}>
       <Section className="input">
         <InputRow className="input-container">
           <InputGroupInline>
@@ -79,7 +87,7 @@ const CreateExpense = () => {
           <AddBtn type="onsubmit">저장</AddBtn>
         </InputRow>
       </Section>
-    </>
+    </form>
   );
 };
 
