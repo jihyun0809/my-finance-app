@@ -2,97 +2,6 @@ import { useState } from "react";
 import styled from "styled-components";
 import supabase from "../utils/supabase";
 
-const CreateExpense = ({ expenses, setExpenses, setMonth }) => {
-  const [date, setDate] = useState("");
-  const [item, setItem] = useState("");
-  const [price, setPrice] = useState(0);
-  const [content, setContent] = useState("");
-
-  const handleChangeDate = (e) => {
-    setDate(e.target.value);
-  };
-  const handleChangeItem = (e) => {
-    setItem(e.target.value);
-  };
-  const handleChangePrice = (e) => {
-    setPrice(e.target.value);
-  };
-  const handleChangeContent = (e) => {
-    setContent(e.target.value);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const { data, error } = await supabase
-      .from("expenses")
-      .insert([
-        { date: date, item: item, amount: price, content: content }, // 추가할 데이터
-      ])
-      .select();
-
-    setExpenses([...expenses, data]);
-    setDate("");
-    setItem("");
-    setPrice(0);
-    setContent("");
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <Section className="input">
-        <InputRow className="input-container">
-          <InputGroupInline>
-            <label htmlFor="date">날짜</label>
-            <input
-              type="text"
-              id="date"
-              value={date}
-              onChange={handleChangeDate}
-              placeholder="YYYY-MM-DD"
-            />
-          </InputGroupInline>
-
-          <InputGroupInline>
-            <label htmlFor="item">항목</label>
-            <input
-              type="text"
-              id="item"
-              value={item}
-              onChange={handleChangeItem}
-              placeholder="지출 항목"
-            />
-          </InputGroupInline>
-
-          <InputGroupInline>
-            <label htmlFor="amount">금액</label>
-            <input
-              type="number"
-              id="amount"
-              value={price}
-              onChange={handleChangePrice}
-              placeholder="지출 금액"
-            />
-          </InputGroupInline>
-
-          <InputGroupInline>
-            <label htmlFor="description">내용</label>
-            <input
-              type="text"
-              id="description"
-              value={content}
-              onChange={handleChangeContent}
-              placeholder="지출 내용"
-            />
-          </InputGroupInline>
-          <AddBtn type="onsubmit">저장</AddBtn>
-        </InputRow>
-      </Section>
-    </form>
-  );
-};
-
-export default CreateExpense;
-
 const Section = styled.section`
   /* 배경색 */
   background-color: #ffffff;
@@ -145,7 +54,7 @@ const InputGroupInline = styled.div`
   }
 `;
 
-const AddBtn = styled.button`
+const AddButton = styled.button`
   /* 내부 공간 */
   padding: 8px 20px;
   /* 높이 */
@@ -171,3 +80,119 @@ const AddBtn = styled.button`
     background-color: #0056b3;
   }
 `;
+
+export default function CreateExpense({ setExpenses, expenses }) {
+  const [date, setDate] = useState("");
+  const [item, setItem] = useState("");
+  const [amount, setAmount] = useState("");
+  const [description, setDescription] = useState("");
+
+  const onChangeDate = (e) => {
+    setDate(e.target.value);
+  };
+
+  const onChangeItem = (e) => {
+    setItem(e.target.value);
+  };
+
+  const onChangeAmount = (e) => {
+    setAmount(e.target.value);
+  };
+
+  const onChangeDescription = (e) => {
+    setDescription(e.target.value);
+  };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+
+    // 미리 체크 후 데이터 보내자
+    const dateReg = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateReg.test(date)) {
+      alert("날짜 형식이 올바르지 않습니다~!");
+      return;
+    }
+
+    if (item === "") {
+      alert("항목을 입력해주세요~!");
+      return;
+    }
+
+    if (amount === "") {
+      alert("금액을 입력해주세요~!");
+      return;
+    }
+
+    if (description === "") {
+      alert("내용을 입력해주세요~!");
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("expenses")
+      .insert({
+        date,
+        item,
+        amount,
+        description,
+      })
+      .select();
+
+    setExpenses([...expenses, ...data]);
+
+    setDate("");
+    setItem("");
+    setAmount("");
+    setDescription("");
+  };
+
+  return (
+    <Section>
+      <form onSubmit={onSubmit}>
+        <InputRow>
+          <InputGroupInline>
+            <label htmlFor="date">날짜</label>
+            <input
+              type="text"
+              id="date"
+              value={date}
+              onChange={onChangeDate}
+              placeholder="YYYY-MM-DD"
+            />
+          </InputGroupInline>
+          <InputGroupInline>
+            <label htmlFor="item">항목</label>
+            <input
+              type="text"
+              id="item"
+              value={item}
+              onChange={onChangeItem}
+              placeholder="지출 항목"
+            />
+          </InputGroupInline>
+          <InputGroupInline>
+            <label htmlFor="amount">금액</label>
+            <input
+              type="number"
+              id="amount"
+              value={amount}
+              onChange={onChangeAmount}
+              placeholder="지출 금액"
+            />
+          </InputGroupInline>
+          <InputGroupInline>
+            <label htmlFor="description">내용</label>
+            <input
+              type="text"
+              id="description"
+              value={description}
+              onChange={onChangeDescription}
+              placeholder="지출 내용"
+            />
+          </InputGroupInline>
+          <AddButton>저장</AddButton>
+        </InputRow>
+      </form>
+    </Section>
+  );
+}

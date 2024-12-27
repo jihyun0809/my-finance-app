@@ -1,7 +1,5 @@
 import styled from "styled-components";
-import supabase from "../utils/supabase";
 import { Link } from "react-router-dom";
-// import { Link } from "react-router-dom";
 
 const Section = styled.section`
   /* 배경색 */
@@ -91,18 +89,21 @@ export default function ExpenseList({ expenses }) {
   return (
     <Section>
       <ExpenseItemList>
-        {expenses.map((expense) => {
-          return (
-            <Link to={`/expenses/${expense.id}`}>
-              <div key={expense.id}>
-                <span>{expense.date}</span>
-                <span>{expense.item}</span>
-                <span>{expense.amount}</span>
-                <span>{expense.content}</span>
-              </div>
-            </Link>
-          );
-        })}
+        {expenses.map((expense) => (
+          <ExpenseItem
+            key={expense.id}
+            as={Link}
+            to={`/expenses/${expense.id}`}
+          >
+            <ExpenseDetails>
+              <span>{expense.date}</span>
+              <span>
+                {expense.item} - {expense.description}
+              </span>
+            </ExpenseDetails>
+            <span>{expense.amount} 원</span>
+          </ExpenseItem>
+        ))}
       </ExpenseItemList>
     </Section>
   );
